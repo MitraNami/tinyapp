@@ -12,6 +12,11 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+//returns a string of 6 random alphanumeric characters
+const generateRandomString = () => {
+  return Math.random().toString(36).substring(2, 8);
+};
+
 
 app.get('/', (req, res) => {
   res.send("Hello!");
@@ -52,9 +57,16 @@ app.post('/urls', (req, res) => {
   res.redirect(302, `/urls/${shortURL}`);
 });
 
-//returns a string of 6 random alphanumeric characters
-const generateRandomString = () => {
-  return Math.random().toString(36).substring(2, 8);
-};
+app.get('/u/:shortURL', (req, res) => {
+  const shortURL = req.params.shortURL;
+  if (!urlDatabase[shortURL]) {
+    res.status(400).send("Page Not Found!");
+    return;
+  }
+  const longURL = urlDatabase[shortURL];
+  res.redirect(longURL);
+});
+
+
 
 app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
