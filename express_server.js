@@ -34,12 +34,13 @@ app.get('/urls.json', (req, res) => {
 app.get('/hello', (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
-
-
+/////////////////////////////////////
 app.get('/urls', (req, res) => {
+  console.log(users[req.cookies['user_id']])
+  const user = users[req.cookies['user_id']];
   const templateVars = { 
-   username: req.cookies["username"],
-    urls: urlDatabase,
+   user,
+   urls: urlDatabase,
   };
   res.render('urls_index', templateVars);
 });
@@ -47,9 +48,8 @@ app.get('/urls', (req, res) => {
 
 //Add a GET route to show the form
 app.get('/urls/new', (req, res) => {
-  const templateVars = {
-    username: req.cookies["username"]
-  };
+  const user = users[req.cookies['user_id']];
+  const templateVars = {user};
   res.render("urls_new", templateVars);
 });
 
