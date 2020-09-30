@@ -75,6 +75,11 @@ app.get('/register', (req, res) => {
   res.render("registration");
 });
 
+//Add a GET route to show the Login form
+app.get('/login', (req, res) => {
+  res.render("login")
+});
+
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = helper.generateRandomString();
