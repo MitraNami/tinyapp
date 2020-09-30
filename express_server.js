@@ -45,10 +45,15 @@ app.get('/urls', (req, res) => {
 
 //Add a GET route to show the form
 app.get('/urls/new', (req, res) => {
-  const user = users[req.cookies['user_id']];
-  const email = user ? user.email : undefined;
-  const templateVars = { email };
-  res.render("urls_new", templateVars);
+  // Only loggedin users can access this page
+  if (req.cookies['user_id']) {
+    const user = users[req.cookies['user_id']];
+    const email = user ? user.email : undefined;
+    const templateVars = { email };
+    res.render("urls_new", templateVars);
+    return;
+  }
+  res.redirect('/login');
 });
 
 app.get('/urls/:shortURL', (req, res) => {
