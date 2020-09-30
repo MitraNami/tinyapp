@@ -47,8 +47,9 @@ app.get('/hello', (req, res) => {
 
 app.get('/urls', (req, res) => {
   const user = users[req.cookies['user_id']];
+  const email = user ? user.email : undefined;
   const templateVars = {
-    user,
+    email,
     urls: urlDatabase,
   };
   res.render('urls_index', templateVars);
@@ -58,7 +59,8 @@ app.get('/urls', (req, res) => {
 //Add a GET route to show the form
 app.get('/urls/new', (req, res) => {
   const user = users[req.cookies['user_id']];
-  const templateVars = {user};
+  const email = user ? user.email : undefined;
+  const templateVars = {email};
   res.render("urls_new", templateVars);
 });
 
@@ -122,8 +124,9 @@ app.post('/logout', (req, res) => {
 
 // A registration handler
 app.post("/register", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
+  const {email, password} = req.body;
+  // const email = req.body.email;
+  // const password = req.body.password;
   if (!email || !password) {
     res.status(400).send("<h1>Please fill in Email and Password fields.</h1>");
     return;
