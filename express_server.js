@@ -46,7 +46,6 @@ app.get('/urls', (req, res) => {
 //Add a GET route to show the form
 app.get('/urls/new', (req, res) => {
   const user = users[req.cookies['user_id']];
-  console.log(user);
   const email = user ? user.email : undefined;
   const templateVars = { email };
   res.render("urls_new", templateVars);
@@ -78,7 +77,7 @@ app.get('/register', (req, res) => {
 
 //Add a GET route to show the Login form
 app.get('/login', (req, res) => {
-  res.render("login")
+  res.render("login");
 });
 
 app.post('/urls', (req, res) => {
@@ -111,7 +110,7 @@ app.post('/login', (req, res) => {
     res.redirect('/urls');
     return;
   }
-  res.status(403).send("Wrong Eamil or password!");
+  res.status(403).send("<h1>Wrong Eamil or password!</h1>");
 });
 
 app.post('/logout', (req, res) => {
