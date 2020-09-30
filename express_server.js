@@ -11,7 +11,7 @@ const PORT = 8080; // default port 8080
 app.set('view engine', 'ejs');
 app.use(cookieParser());
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -33,8 +33,8 @@ app.get('/hello', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const user = users[req.cookies['user_id']];
-  const email = user ? user.email : undefined;
+  const id = req.cookies['user_id'];
+  const email = id ? users[id]['email'] : null;
   const templateVars = {
     email,
     urls: urlDatabase,
@@ -46,8 +46,9 @@ app.get('/urls', (req, res) => {
 //Add a GET route to show the form
 app.get('/urls/new', (req, res) => {
   const user = users[req.cookies['user_id']];
+  console.log(user);
   const email = user ? user.email : undefined;
-  const templateVars = {email};
+  const templateVars = { email };
   res.render("urls_new", templateVars);
 });
 
@@ -103,10 +104,15 @@ app.post('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  const {email, password} = req.body;
-
-  ///res.cookie('user_id', )
-  res.redirect('/urls');
+  const { email, password } = req.body;
+  if (helper.verifyUser(email, password, users)) {
+    const id = helper.getId(email, users);
+    console.log(id);
+    res.cookie('user_id', id);
+    res.redirect('/urls');
+    return;
+  }
+  res.status(403).send("Wrong Eamil or password!");
 });
 
 app.post('/logout', (req, res) => {
@@ -117,7 +123,7 @@ app.post('/logout', (req, res) => {
 
 // A registration handler
 app.post("/register", (req, res) => {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
   if (!email || !password) {
     res.status(400).send("<h1>Please fill in Email and Password fields.</h1>");
     return;
@@ -129,7 +135,7 @@ app.post("/register", (req, res) => {
   }
   const id = helper.generateRandomString();
   // put the new user in users object
-  users[id] = {id, email, password};
+  users[id] = { id, email, password };
   res.redirect('/urls');
 
 });

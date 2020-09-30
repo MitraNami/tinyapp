@@ -15,4 +15,33 @@ const checkEmail = (newEmail, users) => {
 };
 
 
-module.exports = {generateRandomString, checkEmail};
+// returns the true if the for correct email and pass
+const verifyUser = (email, password, users) => {
+  for (let id in users) {
+    if (email === users[id]['email']) {
+      if (password === users[id]['password']) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+// returns the id of the user given their email
+const getId = (emailToCheck, users) => {
+  for (let id in users) {
+    if (emailToCheck === users[id]['email']) {
+      return id;
+    }
+  }
+  return null;
+};
+
+
+
+module.exports = {
+  generateRandomString,
+  checkEmail,
+  verifyUser,
+  getId
+};
