@@ -34,13 +34,12 @@ app.get('/urls.json', (req, res) => {
 app.get('/hello', (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
-/////////////////////////////////////
+
 app.get('/urls', (req, res) => {
-  console.log(users[req.cookies['user_id']])
   const user = users[req.cookies['user_id']];
-  const templateVars = { 
-   user,
-   urls: urlDatabase,
+  const templateVars = {
+    user,
+    urls: urlDatabase,
   };
   res.render('urls_index', templateVars);
 });
