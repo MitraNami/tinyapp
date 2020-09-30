@@ -14,8 +14,8 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
 const users = {};
@@ -60,7 +60,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const templateVars = {
     shortURL,
-    longURL: urlDatabase[shortURL]
+    longURL: urlDatabase[shortURL]['longURL']
   };
   res.render('urls_show', templateVars);
 });
@@ -68,10 +68,10 @@ app.get('/urls/:shortURL', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   if (!urlDatabase[shortURL]) {
-    res.status(400).send("Page Not Found!");
+    res.status(400).send("<h1>Page Not Found!</h1>");
     return;
   }
-  const longURL = urlDatabase[shortURL];
+  const longURL = urlDatabase[shortURL]['longURL'];
   res.redirect(longURL);
 });
 
@@ -88,7 +88,9 @@ app.get('/login', (req, res) => {
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = helper.generateRandomString();
-  urlDatabase[shortURL] = longURL;
+  //if I can create a shortURL I'm already logged in
+  const userID = req.cookies['user_id'];
+  urlDatabase[shortURL] = {longURL, userID};
   // redirect the user to a new page
   res.redirect(302, `/urls/${shortURL}`);
 });
@@ -103,8 +105,8 @@ app.post('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const newLongURL = req.body.newLongURL;
   //update the data base
-  urlDatabase[shortURL] = newLongURL;
-  res.redirect(`/urls/${shortURL}`);
+  urlDatabase[shortURL]['longURL'] = newLongURL;
+  res.redirect("/urls");
 });
 
 app.post('/login', (req, res) => {
