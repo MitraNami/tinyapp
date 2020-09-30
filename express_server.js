@@ -15,6 +15,8 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {};
+
 //returns a string of 6 random alphanumeric characters
 const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
@@ -109,6 +111,17 @@ app.post('/logout', (req, res) => {
   res.redirect("/urls");
 });
 
+// A registration handler
+app.post("/register", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const id = generateRandomString();
+  // put the new user in users object
+  users[id] = {id, email, password};
+  res.cookie('user_id', id);
+  res.redirect('/urls');
+
+});
 
 
 
