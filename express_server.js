@@ -1,9 +1,12 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+
+const helper = require('./helpers');
 
 const app = express();
 const PORT = 8080; // default port 8080
-const bodyParser = require('body-parser');
+
 
 app.set('view engine', 'ejs');
 app.use(cookieParser());
@@ -16,22 +19,6 @@ const urlDatabase = {
 };
 
 const users = {};
-
-//returns a string of 6 random alphanumeric characters
-const generateRandomString = () => {
-  return Math.random().toString(36).substring(2, 8);
-};
-
-// returns ture if there is a user with the given email
-const checkEmail = (newEmail, users) => {
-  for (let id in users) {
-    let email = users[id]['email'];
-    if (email === newEmail) {
-      return true;
-    }
-  }
-  return false;
-};
 
 app.get('/', (req, res) => {
   res.send("Hello!");
@@ -90,7 +77,7 @@ app.get('/register', (req, res) => {
 
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
-  const shortURL = generateRandomString();
+  const shortURL = helper.generateRandomString();
   urlDatabase[shortURL] = longURL;
   // redirect the user to a new page
   res.redirect(302, `/urls/${shortURL}`);
@@ -130,11 +117,11 @@ app.post("/register", (req, res) => {
     return;
   }
   // check if the email is already registered
-  if (checkEmail(email, users)) {
+  if (helper.checkEmail(email, users)) {
     res.status(400).send("<h1>Sorry, this email is already in use.");
     return;
   }
-  const id = generateRandomString();
+  const id = helper.generateRandomString();
   // put the new user in users object
   users[id] = {id, email, password};
   res.cookie('user_id', id);
