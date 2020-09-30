@@ -22,6 +22,16 @@ const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
 };
 
+// returns ture if there is a user with the given email
+const checkEmail = (newEmail, users) => {
+  for (let id in users) {
+    let email = users[id]['email'];
+    if (email === newEmail) {
+      return true;
+    }
+  }
+  return false;
+};
 
 app.get('/', (req, res) => {
   res.send("Hello!");
@@ -116,6 +126,11 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
   if (!email || !password) {
     res.status(400).send("<h1>Please fill in Email and Password fields.</h1>");
+    return;
+  }
+  // check if the email is already registered
+  if (checkEmail(email, users)) {
+    res.status(400).send("<h1>Sorry, this email is already in use.");
     return;
   }
   const id = generateRandomString();
