@@ -70,6 +70,11 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(longURL);
 });
 
+//Add a GET route to show the registration form
+app.get('/register', (req, res) => {
+  res.render("registration");
+});
+
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
