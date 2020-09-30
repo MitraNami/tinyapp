@@ -107,7 +107,6 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
   if (helper.verifyUser(email, password, users)) {
     const id = helper.getId(email, users);
-    console.log(id);
     res.cookie('user_id', id);
     res.redirect('/urls');
     return;
@@ -116,8 +115,8 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  //clear username cookie
-  res.clearCookie('username');
+  //clear user_id cookie
+  res.clearCookie('user_id');
   res.redirect("/urls");
 });
 
