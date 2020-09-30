@@ -125,8 +125,6 @@ app.post('/logout', (req, res) => {
 // A registration handler
 app.post("/register", (req, res) => {
   const {email, password} = req.body;
-  // const email = req.body.email;
-  // const password = req.body.password;
   if (!email || !password) {
     res.status(400).send("<h1>Please fill in Email and Password fields.</h1>");
     return;
