@@ -103,8 +103,9 @@ app.post('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  const user = req.body.username;
-  res.cookie('username', user);
+  const {email, password} = req.body;
+
+  ///res.cookie('user_id', )
   res.redirect('/urls');
 });
 
@@ -129,7 +130,6 @@ app.post("/register", (req, res) => {
   const id = helper.generateRandomString();
   // put the new user in users object
   users[id] = {id, email, password};
-  res.cookie('user_id', id);
   res.redirect('/urls');
 
 });
