@@ -74,7 +74,7 @@ app.get('/urls/:shortURL', (req, res) => {
       };
       res.render('urls_show', templateVars);
     } else {
-        res.send('<h1>You dont have this short URL. Do you want to <a href="/urls/new">create</a> it?</h1>');
+      res.send('<h1>You dont have this short URL. Do you want to <a href="/urls/new">create</a> it?</h1>');
     }
   } else {
     res.status(404).send("<h1>You should <a href='/login'>log in</a> first.</h1>");
