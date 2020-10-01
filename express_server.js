@@ -174,7 +174,7 @@ app.post("/register", (req, res) => {
     return;
   }
   // check if the email is already registered
-  if (helper.checkEmail(email, users)) {
+  if (helper.getUserByEmail(email, users)) {
     res.status(400).send("<h1>Sorry, this email is already in use.");
     return;
   }

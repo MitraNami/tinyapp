@@ -3,12 +3,13 @@ const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
 };
 
-// returns ture if there is a user with the given email
-const checkEmail = (newEmail, users) => {
+// returns the user object for a given email otherwise false
+const getUserByEmail = (newEmail, users) => {
   for (let id in users) {
-    let email = users[id]['email'];
+    let user = users[id];
+    let email = user['email'];
     if (email === newEmail) {
-      return true;
+      return user;
     }
   }
   return false;
@@ -42,7 +43,7 @@ const filterDatabaseByID = (id, db) => {
 
 module.exports = {
   generateRandomString,
-  checkEmail,
+  getUserByEmail,
   verifyUser,
   filterDatabaseByID
 };
