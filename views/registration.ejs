@@ -7,10 +7,11 @@
 </head>
 
 <body>
+  <%- include('partials/_header') %>
   <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
-        <h5 class="card-title">SignUp</h5>
+        <h5 class="card-title">Create Account</h5>
         <form action="/register" method="POST">
           <label for="name">Email:</label>
           <input type="email" name="email">
@@ -18,7 +19,7 @@
           <label for="password">Password:</label>
           <input type="password" name="password">
           <br>
-          <button type="submit">Signup</button>
+          <button class="btn btn-primary" type="submit">Signup</button>
         </form>
 
       </div>

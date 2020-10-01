@@ -62,10 +62,13 @@ app.get('/urls/new', (req, res) => {
 
 // Editing the long url
 app.get('/urls/:shortURL', (req, res) => {
-  if (req.cookies['user_id']) {
+  const id = req.cookies['user_id'];
+  if (id) {
     const shortURL = req.params.shortURL;
     if (urlDatabase[shortURL]) {
+      const email = users[id]['email'];
       const templateVars = {
+        email,
         shortURL,
         longURL: urlDatabase[shortURL]['longURL']
       };
@@ -90,12 +93,18 @@ app.get('/u/:shortURL', (req, res) => {
 
 //Add a GET route to show the registration form
 app.get('/register', (req, res) => {
-  res.render("registration");
+  const id = req.cookies['user_id'];
+  const email = id ? users[id]['email'] : null;
+  const templateVars = {email};
+  res.render("registration", templateVars);
 });
 
 //Add a GET route to show the Login form
 app.get('/login', (req, res) => {
-  res.render("login");
+  const id = req.cookies['user_id'];
+  const email = id ? users[id]['email'] : null;
+  const templateVars = {email};
+  res.render("login", templateVars);
 });
 
 app.post('/urls', (req, res) => {

@@ -3,12 +3,12 @@
     <a class="navbar-brand" href="/urls">TinyApp</a>
     <% if (email) { %>
       <form action='/logout' method="POST">
-        Logged In As: <%= email %>
-        <button type="submit">Logout</button>
+        <span class="navbar-brand">Logged In As: <%= email %></span>
+        <button class="btn btn-primary" type="submit">Logout</button>
       </form>
     <%} else { %>  
-      <a href="/register">Register</a><br>
-      <a href="/login">Login</a>
+      <a class="navbar-brand" href="/register">Register</a><br>
+      <a class="navbar-brand" href="/login">Login</a>
     <% } %>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
