@@ -15,27 +15,17 @@ const checkEmail = (newEmail, users) => {
 };
 
 
-// returns the true if the for correct email and pass
+// returns the user if for the correct email and password, false otherwise
 const verifyUser = (email, password, users, bcrypt) => {
   for (let id in users) {
-    if (email === users[id]['email']) {
-      if (bcrypt.compareSync(password, users[id]['password'])) {
-        return true;
+    let user = users[id];
+    if (email === user['email']) {
+      if (bcrypt.compareSync(password, user['password'])) {
+        return user;
       }
     }
   }
   return false;
-};
-
-
-// returns the id of the user given their email
-const getId = (emailToCheck, users) => {
-  for (let id in users) {
-    if (emailToCheck === users[id]['email']) {
-      return id;
-    }
-  }
-  return null;
 };
 
 
@@ -54,6 +44,5 @@ module.exports = {
   generateRandomString,
   checkEmail,
   verifyUser,
-  getId,
   filterDatabaseByID
 };

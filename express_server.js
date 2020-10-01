@@ -38,7 +38,7 @@ app.get('/hello', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const id = req.session.user_id;
+  const id = req.session['user_id'];
   if (id) {
     const email = users[id]['email'];
     const templateVars = {
@@ -55,7 +55,7 @@ app.get('/urls', (req, res) => {
 //Add a GET route to show the form
 app.get('/urls/new', (req, res) => {
   // Only loggedin users can access this page
-  const id = req.session.user_id;
+  const id = req.session['user_id'];
   if (id) {
     const email = users[id]['email'];
     const templateVars = { email };
@@ -67,7 +67,7 @@ app.get('/urls/new', (req, res) => {
 
 // Editing the long url
 app.get('/urls/:shortURL', (req, res) => {
-  const id = req.session.user_id;
+  const id = req.session['user_id'];
   if (id) {
     const shortURL = req.params.shortURL;
     if (urlDatabase[shortURL]) {
@@ -98,7 +98,7 @@ app.get('/u/:shortURL', (req, res) => {
 
 //Add a GET route to show the registration form
 app.get('/register', (req, res) => {
-  const id = req.session.user_id;
+  const id = req.session['user_id'];
   const email = id ? users[id]['email'] : null;
   const templateVars = {email};
   res.render("registration", templateVars);
@@ -106,14 +106,14 @@ app.get('/register', (req, res) => {
 
 //Add a GET route to show the Login form
 app.get('/login', (req, res) => {
-  const id = req.session.user_id;
+  const id = req.session['user_id'];
   const email = id ? users[id]['email'] : null;
   const templateVars = {email};
   res.render("login", templateVars);
 });
 
 app.post('/urls', (req, res) => {
-  const id = req.session.user_id;
+  const id = req.session['user_id'];
   if (id) {
     const longURL = req.body.longURL;
     const shortURL = helper.generateRandomString();
@@ -128,7 +128,7 @@ app.post('/urls', (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  if (req.session.user_id) {
+  if (req.session['user_id']) {
     const shortURL = req.params.shortURL;
     delete urlDatabase[shortURL];
     res.redirect("/urls");
@@ -138,7 +138,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 });
 
 app.post('/urls/:shortURL', (req, res) => {
-  if (req.session.user_id) {
+  if (req.session['user_id']) {
     const shortURL = req.params.shortURL;
     const newLongURL = req.body.newLongURL;
     //update the data base
@@ -151,9 +151,9 @@ app.post('/urls/:shortURL', (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  if (helper.verifyUser(email, password, users, bcrypt)) {
-    const id = helper.getId(email, users);
-    req.session.user_id = id;
+  const user = helper.verifyUser(email, password, users, bcrypt);
+  if (user) {
+    req.session['user_id'] = user['id'];
     res.redirect('/urls');
     return;
   }
@@ -162,7 +162,7 @@ app.post('/login', (req, res) => {
 
 app.post('/logout', (req, res) => {
   //clear user_id cookie session
-  delete req.session.user_id;
+  delete req.session['user_id'];
   res.redirect("/urls");
 });
 
