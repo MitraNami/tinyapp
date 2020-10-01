@@ -1,5 +1,5 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 
@@ -11,7 +11,10 @@ const PORT = 8080; // default port 8080
 
 
 app.set('view engine', 'ejs');
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['ImLookingForwardTotheweekend', 'NogoodmoviesontheScreen']
+}));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -35,7 +38,7 @@ app.get('/hello', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const id = req.cookies['user_id'];
+  const id = req.session.user_id;
   if (id) {
     const email = users[id]['email'];
     const templateVars = {
@@ -52,7 +55,7 @@ app.get('/urls', (req, res) => {
 //Add a GET route to show the form
 app.get('/urls/new', (req, res) => {
   // Only loggedin users can access this page
-  const id = req.cookies['user_id'];
+  const id = req.session.user_id;
   if (id) {
     const email = users[id]['email'];
     const templateVars = { email };
@@ -64,7 +67,7 @@ app.get('/urls/new', (req, res) => {
 
 // Editing the long url
 app.get('/urls/:shortURL', (req, res) => {
-  const id = req.cookies['user_id'];
+  const id = req.session.user_id;
   if (id) {
     const shortURL = req.params.shortURL;
     if (urlDatabase[shortURL]) {
@@ -95,7 +98,7 @@ app.get('/u/:shortURL', (req, res) => {
 
 //Add a GET route to show the registration form
 app.get('/register', (req, res) => {
-  const id = req.cookies['user_id'];
+  const id = req.session.user_id;
   const email = id ? users[id]['email'] : null;
   const templateVars = {email};
   res.render("registration", templateVars);
@@ -103,18 +106,19 @@ app.get('/register', (req, res) => {
 
 //Add a GET route to show the Login form
 app.get('/login', (req, res) => {
-  const id = req.cookies['user_id'];
+  const id = req.session.user_id;
   const email = id ? users[id]['email'] : null;
   const templateVars = {email};
   res.render("login", templateVars);
 });
 
 app.post('/urls', (req, res) => {
-  if (req.cookies['user_id']) {
+  const id = req.session.user_id;
+  if (id) {
     const longURL = req.body.longURL;
     const shortURL = helper.generateRandomString();
     //if I can create a shortURL I'm already logged in
-    const userID = req.cookies['user_id'];
+    const userID = id;
     urlDatabase[shortURL] = {longURL, userID};
     // redirect the user to a new page
     res.redirect(302, `/urls/${shortURL}`);
@@ -124,7 +128,7 @@ app.post('/urls', (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  if (req.cookies['user_id']) {
+  if (req.session.user_id) {
     const shortURL = req.params.shortURL;
     delete urlDatabase[shortURL];
     res.redirect("/urls");
@@ -134,7 +138,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 });
 
 app.post('/urls/:shortURL', (req, res) => {
-  if (req.cookies['user_id']) {
+  if (req.session.user_id) {
     const shortURL = req.params.shortURL;
     const newLongURL = req.body.newLongURL;
     //update the data base
@@ -149,7 +153,7 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
   if (helper.verifyUser(email, password, users, bcrypt)) {
     const id = helper.getId(email, users);
-    res.cookie('user_id', id);
+    req.session.user_id = id;
     res.redirect('/urls');
     return;
   }
@@ -157,8 +161,8 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  //clear user_id cookie
-  res.clearCookie('user_id');
+  //clear user_id cookie session
+  delete req.session.user_id;
   res.redirect("/urls");
 });
 
