@@ -1,10 +1,12 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
 
 const helper = require('./helpers');
 
 const app = express();
+const salt = bcrypt.genSaltSync(10);
 const PORT = 8080; // default port 8080
 
 
@@ -174,7 +176,12 @@ app.post("/register", (req, res) => {
   }
   const id = helper.generateRandomString();
   // put the new user in users object
-  users[id] = { id, email, password };
+  users[id] = { 
+    id,
+    email,
+    password: bcrypt.hashSync(password, salt)
+  };
+  console.log(users)
   res.redirect('/login');
 
 });
