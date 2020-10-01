@@ -3,7 +3,7 @@ const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
 };
 
-// returns the user object for a given email otherwise false
+// returns the user id for a given email otherwise false
 const getUserByEmail = (newEmail, users) => {
   for (let id in users) {
     let user = users[id];

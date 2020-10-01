@@ -129,7 +129,6 @@ app.post('/urls', (req, res) => {
   if (id) {
     const longURL = req.body.longURL;
     const shortURL = helper.generateRandomString();
-    //if I can create a shortURL I'm already logged in
     const userID = id;
     urlDatabase[shortURL] = {longURL, userID};
     // redirect the user to a new page
@@ -192,7 +191,7 @@ app.post("/register", (req, res) => {
   }
   const id = helper.generateRandomString();
   // put the new user in users object
-  users[id] = { 
+  users[id] = {
     id,
     email,
     password: bcrypt.hashSync(password, salt)
