@@ -173,7 +173,7 @@ app.post('/login', (req, res) => {
 
 app.post('/logout', (req, res) => {
   //clear user_id cookie session
-  delete req.session['user_id'];
+  req.session = null;
   res.redirect("/urls");
 });
 
