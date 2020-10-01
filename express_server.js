@@ -26,7 +26,11 @@ const urlDatabase = {
 const users = {};
 
 app.get('/', (req, res) => {
-  res.send("Hello!");
+  if (req.session['user_id']) {
+    res.redirect("/urls");
+    return;
+  }
+  res.redirect('/login');
 });
 
 app.get('/urls.json', (req, res) => {
