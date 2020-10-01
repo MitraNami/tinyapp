@@ -34,21 +34,25 @@ app.get('/hello', (req, res) => {
 
 app.get('/urls', (req, res) => {
   const id = req.cookies['user_id'];
-  const email = id ? users[id]['email'] : null;
-  const templateVars = {
-    email,
-    urls: urlDatabase,
-  };
-  res.render('urls_index', templateVars);
+  if (id) {
+    const email = users[id]['email'];
+    const templateVars = {
+      email,
+      urls: helper.filterDatabaseByID(id, urlDatabase),
+    };
+    res.render('urls_index', templateVars);
+    return;
+  }
+  res.status(404).send("<h1>Please <a href='/login'>log in<a> first.</h1>");
 });
 
 
 //Add a GET route to show the form
 app.get('/urls/new', (req, res) => {
   // Only loggedin users can access this page
-  if (req.cookies['user_id']) {
-    const user = users[req.cookies['user_id']];
-    const email = user ? user.email : undefined;
+  const id = req.cookies['user_id'];
+  if (id) {
+    const email = users[id]['email'];
     const templateVars = { email };
     res.render("urls_new", templateVars);
     return;
@@ -56,13 +60,22 @@ app.get('/urls/new', (req, res) => {
   res.redirect('/login');
 });
 
+// Editing the long url
 app.get('/urls/:shortURL', (req, res) => {
-  const shortURL = req.params.shortURL;
-  const templateVars = {
-    shortURL,
-    longURL: urlDatabase[shortURL]['longURL']
-  };
-  res.render('urls_show', templateVars);
+  if (req.cookies['user_id']) {
+    const shortURL = req.params.shortURL;
+    if (urlDatabase[shortURL]) {
+      const templateVars = {
+        shortURL,
+        longURL: urlDatabase[shortURL]['longURL']
+      };
+      res.render('urls_show', templateVars);
+    } else {
+        res.send('<h1>You dont have this short URL. Do you want to <a href="/urls/new">create</a> it?</h1>');
+    }
+  } else {
+    res.status(404).send("<h1>You should <a href='/login'>log in</a> first.</h1>");
+  }
 });
 
 app.get('/u/:shortURL', (req, res) => {
@@ -86,27 +99,39 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  const longURL = req.body.longURL;
-  const shortURL = helper.generateRandomString();
-  //if I can create a shortURL I'm already logged in
-  const userID = req.cookies['user_id'];
-  urlDatabase[shortURL] = {longURL, userID};
-  // redirect the user to a new page
-  res.redirect(302, `/urls/${shortURL}`);
+  if (req.cookies['user_id']) {
+    const longURL = req.body.longURL;
+    const shortURL = helper.generateRandomString();
+    //if I can create a shortURL I'm already logged in
+    const userID = req.cookies['user_id'];
+    urlDatabase[shortURL] = {longURL, userID};
+    // redirect the user to a new page
+    res.redirect(302, `/urls/${shortURL}`);
+  } else {
+    res.status(403).send('Access denied.');
+  }
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  const shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
-  res.redirect("/urls");
+  if (req.cookies['user_id']) {
+    const shortURL = req.params.shortURL;
+    delete urlDatabase[shortURL];
+    res.redirect("/urls");
+  } else {
+    res.status(403).send('Access denied.');
+  }
 });
 
 app.post('/urls/:shortURL', (req, res) => {
-  const shortURL = req.params.shortURL;
-  const newLongURL = req.body.newLongURL;
-  //update the data base
-  urlDatabase[shortURL]['longURL'] = newLongURL;
-  res.redirect("/urls");
+  if (req.cookies['user_id']) {
+    const shortURL = req.params.shortURL;
+    const newLongURL = req.body.newLongURL;
+    //update the data base
+    urlDatabase[shortURL]['longURL'] = newLongURL;
+    res.redirect("/urls");
+  } else {
+    res.status(403).send('Access denied.');
+  }
 });
 
 app.post('/login', (req, res) => {
@@ -141,7 +166,7 @@ app.post("/register", (req, res) => {
   const id = helper.generateRandomString();
   // put the new user in users object
   users[id] = { id, email, password };
-  res.redirect('/urls');
+  res.redirect('/login');
 
 });
 
