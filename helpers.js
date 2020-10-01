@@ -9,14 +9,14 @@ const getUserByEmail = (newEmail, users) => {
     let user = users[id];
     let email = user['email'];
     if (email === newEmail) {
-      return user;
+      return id;
     }
   }
   return false;
 };
 
 
-// returns the user if for the correct email and password, false otherwise
+// returns the user for the correct email and password, false otherwise
 const verifyUser = (email, password, users, bcrypt) => {
   for (let id in users) {
     let user = users[id];
