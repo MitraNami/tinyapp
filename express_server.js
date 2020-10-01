@@ -103,7 +103,11 @@ app.get('/u/:shortURL', (req, res) => {
 //Add a GET route to show the registration form
 app.get('/register', (req, res) => {
   const id = req.session['user_id'];
-  const email = id ? users[id]['email'] : null;
+  if (id) {
+    res.redirect('/urls');
+    return;
+  }
+  const email = null;
   const templateVars = {email};
   res.render("registration", templateVars);
 });
@@ -111,7 +115,11 @@ app.get('/register', (req, res) => {
 //Add a GET route to show the Login form
 app.get('/login', (req, res) => {
   const id = req.session['user_id'];
-  const email = id ? users[id]['email'] : null;
+  if (id) {
+    res.redirect('/urls');
+    return;
+  }
+  const email = null;
   const templateVars = {email};
   res.render("login", templateVars);
 });
@@ -189,7 +197,8 @@ app.post("/register", (req, res) => {
     email,
     password: bcrypt.hashSync(password, salt)
   };
-  res.redirect('/login');
+  req.session['user_id'] = id;
+  res.redirect('/urls');
 
 });
 
