@@ -27,6 +27,7 @@ const verifyUser = (email, password, users) => {
   return false;
 };
 
+
 // returns the id of the user given their email
 const getId = (emailToCheck, users) => {
   for (let id in users) {
@@ -38,10 +39,21 @@ const getId = (emailToCheck, users) => {
 };
 
 
+const filterDatabaseByID = (id, db) => {
+  return Object.entries(db).reduce((acc, [key, value]) => {
+    if (value['userID'] === id) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+};
+
+
 
 module.exports = {
   generateRandomString,
   checkEmail,
   verifyUser,
-  getId
+  getId,
+  filterDatabaseByID
 };
