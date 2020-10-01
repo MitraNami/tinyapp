@@ -16,10 +16,10 @@ const checkEmail = (newEmail, users) => {
 
 
 // returns the true if the for correct email and pass
-const verifyUser = (email, password, users) => {
+const verifyUser = (email, password, users, bcrypt) => {
   for (let id in users) {
     if (email === users[id]['email']) {
-      if (password === users[id]['password']) {
+      if (bcrypt.compareSync(password, users[id]['password'])) {
         return true;
       }
     }

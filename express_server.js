@@ -147,7 +147,7 @@ app.post('/urls/:shortURL', (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  if (helper.verifyUser(email, password, users)) {
+  if (helper.verifyUser(email, password, users, bcrypt)) {
     const id = helper.getId(email, users);
     res.cookie('user_id', id);
     res.redirect('/urls');
@@ -181,7 +181,6 @@ app.post("/register", (req, res) => {
     email,
     password: bcrypt.hashSync(password, salt)
   };
-  console.log(users)
   res.redirect('/login');
 
 });
